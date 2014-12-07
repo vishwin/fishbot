@@ -13,7 +13,6 @@
 #include <netdb.h>
 
 #define MSG_LEN 512
-#define RPL_LEN 4096
 
 int main() {
 	// hints for socket creation, address resolution
@@ -52,16 +51,17 @@ int main() {
 	
 	// identify ourself and join a channel
 	char message[MSG_LEN+1]; // for null char
-	char reply[RPL_LEN+1];
+	char reply[MSG_LEN+1];
 	snprintf(message, MSG_LEN, "NICK vshbot\r\n");
 	write(sock, message, strlen(message));
 	snprintf(message, MSG_LEN, "USER tsstbot 8 * :vishwin's bot\r\n");
 	write(sock, message, strlen(message));
-/*	snprintf(message, MSG_LEN, "JOIN ##vishwin\r\n");
-	write(sock, message, strlen(message)); */
+	snprintf(message, MSG_LEN, "JOIN ##vishwin\r\n");
+	write(sock, message, strlen(message));
 	
-	while (read(sock, reply, RPL_LEN)!=0 && !sigint) {
+	while (read(sock, reply, MSG_LEN)!=0) {
 		printf(reply);
+		memset(reply, '\0', MSG_LEN+1);
 	}
 	
 	// close connection
